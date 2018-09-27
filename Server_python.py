@@ -20,6 +20,7 @@ if protocolo == "TCP":
         data = conn.recv(BUFFER_SIZE)
         if not data: break
         print ("received data:", data)
+        print("Endereço", addr)
         conn.send(data)
     conn.close()
 
