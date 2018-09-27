@@ -16,20 +16,31 @@ if protocolo == "TCP":
     s.bind((TCP_IP, TCP_PORT))
     s.listen(1)
     conn, addr = s.accept()
-    #print ('Connection address:', addr)
     while 1:
         data = conn.recv(BUFFER_SIZE)
         if not data: break
         print ("received data:", data)
-        conn.send(data)  # echo
+        conn.send(data)
     conn.close()
+
+
 elif protocolo == "UDP":
     print("UDP selecionado")
-    UDP_IP = IP
-    UDP_PORT = PORT
-    sock = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
-    sock.bind((UDP_IP, UDP_PORT))
-    while True:
-        data, addr = sock.recvfrom(20) # buffer size is 1024 bytes
-        print ("received message:", data) 
-    conn.close()
+    BUFFER_SIZE = 20
+    msgFromServer = "Hello"
+    bytesToSend = str.encode(msgFromServer)
+    UDPServerSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM) 
+    # Bind to address and ip
+    UDPServerSocket.bind((IP, PORT))  
+    print("UDP server up and listening")  
+    # Listen for incoming datagrams
+    while(True):
+        bytesAddressPair = UDPServerSocket.recvfrom(BUFFER_SIZE)
+        message = bytesAddressPair[0]
+        address = bytesAddressPair[1]
+        clientMsg = "Message from Client:{}".format(message)
+        clientIP  = "Client IP Address:{}".format(address)
+        print(clientMsg)
+        print(clientIP)
+        # Sending a reply to client
+        UDPServerSocket.sendto(bytesToSend, address)
