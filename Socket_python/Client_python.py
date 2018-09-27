@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import socket
-import timeit
+import time
 
 protocolo = input("Indicar o protocolo de transporte desejado (UTP/TCP) ")
 tentativas = int (input("Indique a quantidade de tentativas "))
@@ -24,9 +24,9 @@ if protocolo == "TCP":
 
     while (tentativas>0):
         s.send(MESSAGE.encode("utf-8"))
-        start = timeit.timeit()
+        start = time.clock()
         data = s.recv(BUFFER_SIZE)
-        end = timeit.timeit()
+        end = time.clock()
         elapsed = end-start
         print (elapsed)
         tentativas = tentativas - 1
@@ -50,14 +50,21 @@ elif protocolo == "UDP":
         UDP_PORT = PORT
         sock = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
         sock.sendto(MESSAGE.encode("utf-8"), (UDP_IP, UDP_PORT))
-        start = timeit.timeit()
-        end = timeit.timeit()
+        start = time.time()
+        end = time.time()
         elapsed = end-start
         print (elapsed)
         tentativas = tentativas - 1
         n = n + 1
-        media = (media + elapsed)/n
-    print("Tempo médio de resposta: ",media)
+        if elapsed > maximum:
+            maximum = elapsed
+        elif elapsed < minimum:
+            minimum = elapsed
+        media = (media + elapsed)
+    media = media/n    
+    print ("Tempo médio de resposta: ",media)
+    print ("Resposta mais lenta: ",maximum)
+    print ("Resposta mais rápida: ",minimum)
 
 else:
     print ("Selecione um protocolo válido")
