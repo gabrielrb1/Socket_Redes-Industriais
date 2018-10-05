@@ -10,9 +10,9 @@ PORT = 5005
 MESSAGE = "a"
 media = 0
 maximum = 0
-minimum = 0
+minimum = 1
 n = 0
-
+acerto = 0
 
 if protocolo == "TCP":
     print ("TCP selecionado")
@@ -21,47 +21,58 @@ if protocolo == "TCP":
     BUFFER_SIZE = 1024
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((TCP_IP, TCP_PORT))
-
     while (tentativas>0):
-        s.send(MESSAGE.encode("utf-8"))
         start = time.clock()
+        s.send(MESSAGE.encode("utf-8"))
         data = s.recv(BUFFER_SIZE)
+        data = data.decode("utf-8")
+        end = time.clock()
+        elapsed = end-start
+        if data == MESSAGE:
+            print (elapsed)
+            print (data)
+            tentativas = tentativas - 1
+            n = n + 1
+            if elapsed > maximum:
+                maximum = elapsed
+            elif elapsed < minimum:
+                minimum = elapsed
+            media = media + elapsed
+            acerto = acerto + 1
+        else:
+            elapsed = 0
+    s.close()
+    end = time.clock()
+    elapsed = end - start
+    media = media/n
+    assertividade = acerto/n*100
+    print ("Tempo médio de resposta: ",elapsed)
+    print ("Resposta mais lenta: ",maximum)
+    print ("Resposta mais rápida: ",minimum)
+    print ("Assertividade [ % ]",assertividade)
+
+
+elif protocolo == "UDP":
+    print("UDP selecionado")
+    sock = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
+    while (tentativas>0):
+        UDP_IP = IP
+        UDP_PORT = PORT        
+        start = time.clock()
+        sock.sendto(MESSAGE.encode("utf-8"), (UDP_IP, UDP_PORT))
+        data, addr = sock.recvfrom(20)
         end = time.clock()
         elapsed = end-start
         print (elapsed)
         tentativas = tentativas - 1
         n = n + 1
-        if elapsed > maximum:
-            maximum = elapsed
-        elif elapsed < minimum:
-            minimum = elapsed
         media = media + elapsed
-    s.close()
-    media = media/n
-    print ("Tempo médio de resposta: ",media)
-    print ("Resposta mais lenta: ",maximum)
-    print ("Resposta mais rápida: ",minimum)
-
-
-elif protocolo == "UDP":
-    print("UDP selecionado")
-    while (tentativas>0):
-        UDP_IP = IP
-        UDP_PORT = PORT
-        sock = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
-        sock.sendto(MESSAGE.encode("utf-8"), (UDP_IP, UDP_PORT))
-        start = time.time()
-        end = time.time()
-        elapsed = end-start
-        print (elapsed)
-        tentativas = tentativas - 1
-        n = n + 1
         if elapsed > maximum:
             maximum = elapsed
         elif elapsed < minimum:
-            minimum = elapsed
-        media = (media + elapsed)
-    media = media/n    
+           minimum = elapsed
+        media = media + elapsed
+    media = (media)/n
     print ("Tempo médio de resposta: ",media)
     print ("Resposta mais lenta: ",maximum)
     print ("Resposta mais rápida: ",minimum)
