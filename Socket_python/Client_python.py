@@ -50,6 +50,7 @@ if protocolo == "TCP":
     print ("Resposta mais lenta: ",maximum)
     print ("Resposta mais rápida: ",minimum)
     print ("Assertividade [ % ]",assertividade)
+    print ("Quantidade de mensagens enviadas: ",n)
 
 
 elif protocolo == "UDP":
@@ -76,6 +77,7 @@ elif protocolo == "UDP":
     print ("Tempo médio de resposta: ",media)
     print ("Resposta mais lenta: ",maximum)
     print ("Resposta mais rápida: ",minimum)
+    print ("Quantidade de mensagens enviadas: ",n)
 
 else:
     print ("Selecione um protocolo válido")
